@@ -44,6 +44,13 @@ try{
       //const start = init();
       return res.json(response)
   })
+
+  app.get('/run', (req,res)=>{
+      var response = [{status:200}];
+      console.log("Working...");
+      const start = init();
+      return res.json(response)
+  })
   
   app.post('/set',(req,res)=>{
       const db = new JSONdb('./database/database.json');

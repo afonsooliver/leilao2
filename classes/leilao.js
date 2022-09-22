@@ -16,6 +16,7 @@ class Rural {
     const url3 = "https://www.leilaoimovel.com.br/encontre-seu-imovel/?states=sp&location=lencois-paulista";
     const url4 = "https://www.leilaoimovel.com.br/encontre-seu-imovel/?states=sp&location=bauru";
     this.db = new JSONdb('./database/database.json');
+    this.dbkeys = new JSONdb('./database/database_keys.json');
     this.url = [url1,url2,url3,url4];
     this.docs = [];
     this.error = [];
@@ -39,12 +40,12 @@ class Rural {
     for (var doc of this.docs) {
       var key = cyrb53(doc.link);
       if (this.db.has(key)) {
-        count++;
+        count++
       } else {
         var link2 = this.extractLink(doc.link)
-        plist.push(link2)
-        klist.push(key)
-        dlist.push(doc)
+            plist.push(link2)
+            klist.push(key)
+            dlist.push(doc)  
       }
     }
     const results = await Promise.all(plist)
@@ -53,7 +54,14 @@ class Rural {
       var key = klist[i];
       var link2 = results[i];
       var json = JSON.stringify({ key: key, title: doc.title, link: doc.link, link2: link2, price: doc.price, status: 0, comments: "", datealarm: 0 })
-      var insert = this.db.set(key, json);
+      var key2 = cyrb53(link2);
+         if (this.dbkeys.has(key2)) {
+             count++; 
+         }else{
+           var insert = this.db.set(key, json);
+           var insert2 = this.dbkeys.set(key2, key);
+
+         }
     }
     console.log("#+docs: ", this.docs.length - count)
   }
